@@ -8,18 +8,24 @@ interface DirectoryStructure {
     [ipAddress: string]: (string | NestedDirectoryStructure)[];
 }
 
-export async function fetchAndCacheData(): Promise<any> {
+let cachedResponse: DirectoryStructure | null = null;
+
+export async function fetchAndCacheData(): Promise<void> {
     try {
         const response = await fetch('https://rest-test-eight.vercel.app/api/test');
         const data = await response.json();
         
-        const transformedResponse = transformResponse(data);
-        return transformedResponse;
-    
+        cachedResponse = transformResponse(data);
+
+        console.log('Data cached successfully');
     } catch (error) {
         console.error('Error fetching or caching data:', error);
         throw error;
     }
+}
+
+export function getCachedData(): DirectoryStructure | null {
+    return cachedResponse;
 }
 
 function transformResponse(response: any): DirectoryStructure {
